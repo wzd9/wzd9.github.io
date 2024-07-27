@@ -6,19 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>mysql8配置用户权限 | 个人博客</title>
+  <title>zookeeper集群搭建 | 个人博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1、登录mysql由于我的 mysql8 是由 docker 启动，先通过 docker 命令进入mysql 容器，再使用 mysql 命令登录 mysql。 123456789101112131415161718192021docker exec -it mysql8[容器名称] bashbash-4.4# mysql -u root -pEnter password: Welcome to t">
+  <meta name="description" content="本文主要讲述如何在 centos8 上搭建 zookeeper 集群。centos8 基础知识自行搜索，本文不过多赘述。 1、准备工作​	配置 idk环境，本文为 jdk1.8，下载 SSH 连接工具，本文使用 tabby。准备 三台 服务器，也可以一台，在同时启动三个 zookeeper（伪集群）。本文用三台服务器作为案例，ip 地址分别为 173.16.4.130，173.16.4.131，1">
 <meta property="og:type" content="article">
-<meta property="og:title" content="mysql8配置用户权限">
-<meta property="og:url" content="http://example.com/2024/06/04/mysql8%E9%85%8D%E7%BD%AE%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90/index.html">
+<meta property="og:title" content="zookeeper集群搭建">
+<meta property="og:url" content="http://example.com/2024/07/25/zookeeper%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/index.html">
 <meta property="og:site_name" content="个人博客">
-<meta property="og:description" content="1、登录mysql由于我的 mysql8 是由 docker 启动，先通过 docker 命令进入mysql 容器，再使用 mysql 命令登录 mysql。 123456789101112131415161718192021docker exec -it mysql8[容器名称] bashbash-4.4# mysql -u root -pEnter password: Welcome to t">
+<meta property="og:description" content="本文主要讲述如何在 centos8 上搭建 zookeeper 集群。centos8 基础知识自行搜索，本文不过多赘述。 1、准备工作​	配置 idk环境，本文为 jdk1.8，下载 SSH 连接工具，本文使用 tabby。准备 三台 服务器，也可以一台，在同时启动三个 zookeeper（伪集群）。本文用三台服务器作为案例，ip 地址分别为 173.16.4.130，173.16.4.131，1">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-06-04T08:14:11.000Z">
-<meta property="article:modified_time" content="2024-07-27T02:58:09.178Z">
+<meta property="article:published_time" content="2024-07-25T12:15:42.000Z">
+<meta property="article:modified_time" content="2024-07-27T02:56:45.639Z">
 <meta property="article:author" content="wzd">
-<meta property="article:tag" content="mysql">
+<meta property="article:tag" content="原创">
+<meta property="article:tag" content="zookeeper">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="个人博客" type="application/atom+xml">
@@ -155,48 +156,149 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-mysql8配置用户权限" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-zookeeper集群搭建" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      mysql8配置用户权限
+      zookeeper集群搭建
     </h1>
   
 
         
-        <a href="/2024/06/04/mysql8%E9%85%8D%E7%BD%AE%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90/" class="archive-article-date">
-  	<time datetime="2024-06-04T08:14:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-06-04</time>
+        <a href="/2024/07/25/zookeeper%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/" class="archive-article-date">
+  	<time datetime="2024-07-25T12:15:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-07-25</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="1、登录mysql"><a href="#1、登录mysql" class="headerlink" title="1、登录mysql"></a>1、登录mysql</h1><p>由于我的 mysql8 是由 docker 启动，先通过 docker 命令进入mysql 容器，再使用 mysql 命令登录 mysql。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it mysql8[容器名称] bash</span><br><span class="line">bash-4.4# mysql -u root -p</span><br><span class="line">Enter password: </span><br><span class="line">Welcome to the MySQL monitor.  Commands end with ; or \g.</span><br><span class="line">Your MySQL connection id is 8</span><br><span class="line">Server version: 8.0.36 MySQL Community Server - GPL</span><br><span class="line"></span><br><span class="line">Copyright (c) 2000, 2024, Oracle and/or its affiliates.</span><br><span class="line"></span><br><span class="line">Oracle is a registered trademark of Oracle Corporation and/or its</span><br><span class="line">affiliates. Other names may be trademarks of their respective</span><br><span class="line">owners.</span><br><span class="line"></span><br><span class="line">Type &#x27;help;&#x27; or &#x27;\h&#x27; for help. Type &#x27;\c&#x27; to clear the current input statement.</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">切换数据库实例</span></span><br><span class="line"><span class="meta prompt_">mysql&gt; </span><span class="language-bash">use mysql;</span></span><br><span class="line">Reading table information for completion of table and column names</span><br><span class="line">You can turn off this feature to get a quicker startup with -A</span><br><span class="line"></span><br><span class="line">Database changed</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
+        <p>本文主要讲述如何在 centos8 上搭建 zookeeper 集群。centos8 基础知识自行搜索，本文不过多赘述。</p>
+<h1 id="1、准备工作"><a href="#1、准备工作" class="headerlink" title="1、准备工作"></a>1、准备工作</h1><p>​	配置 idk环境，本文为 jdk1.8，下载 SSH 连接工具，本文使用 tabby。准备 三台 服务器，也可以一台，在同时启动三个 zookeeper（伪集群）。本文用三台服务器作为案例，ip 地址分别为 173.16.4.130，173.16.4.131，173.16.4.131。</p>
 <span id="more"></span>
 
-<h1 id="2、用户操作"><a href="#2、用户操作" class="headerlink" title="2、用户操作"></a>2、用户操作</h1><h2 id="2-1、查看用户"><a href="#2-1、查看用户" class="headerlink" title="2.1、查看用户"></a>2.1、查看用户</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select host, user, authentication_string , plugin from user;</span><br></pre></td></tr></table></figure>
+<h1 id="2、下载-zookeeper并解压"><a href="#2、下载-zookeeper并解压" class="headerlink" title="2、下载 zookeeper并解压"></a>2、下载 zookeeper并解压</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://dlcdn.apache.org/zookeeper/zookeeper-3.8.4/apache-zookeeper-3.8.4-bin.tar.gz</span><br></pre></td></tr></table></figure>
 
-<h2 id="2-2、创建本地用户"><a href="#2-2、创建本地用户" class="headerlink" title="2.2、创建本地用户"></a>2.2、创建本地用户</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 创建一个用户名为admin，密码为 admin123456 的本地用户。</span><br><span class="line">create user &#x27;admin&#x27;@&#x27;localhost&#x27; identified by &#x27;admin123456&#x27;;</span><br><span class="line"># 使admin用户获得所有权限</span><br><span class="line">grant all privileges on *.* to &#x27;admin&#x27;@&#x27;localhost&#x27;;</span><br><span class="line"># 刷新授权才会生效</span><br><span class="line">flush privileges;</span><br><span class="line"></span><br><span class="line"># wzd_mianxi数据库创建用户wzd,并赋予权限</span><br><span class="line">create user &#x27;wzd&#x27;@&#x27;%&#x27; identified by &#x27;123456&#x27;;</span><br><span class="line"># 注意，数据库名不能设计成wzd-mianxi，否则授权会报错</span><br><span class="line">grant all privileges on wzd_mianxi.* to &#x27;wzd&#x27;@&#x27;%&#x27;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+<h1 id="3、解压"><a href="#3、解压" class="headerlink" title="3、解压"></a>3、解压</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf apache-zookeeper-3.8.4-bin.tar.gzz  -c /opt/zookeeper</span><br><span class="line">cd /opt/zookeeper/</span><br><span class="line">mv apache-zookeeper-3.8.4-bin apache-zookeeper-3.8.4</span><br></pre></td></tr></table></figure>
 
-<h2 id="2-3、创建外网可访问的用户"><a href="#2-3、创建外网可访问的用户" class="headerlink" title="2.3、创建外网可访问的用户"></a>2.3、创建外网可访问的用户</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 创建一个用户名为admin，密码为 admin123456 的本地用户</span><br><span class="line">create user &#x27;admin&#x27;@&#x27;%&#x27; identified by &#x27;admin123456&#x27;;</span><br><span class="line"># 使admin用户获得所有权限</span><br><span class="line">grant all privileges on *.* to &#x27;admin&#x27;@&#x27;%&#x27;;</span><br><span class="line"># 刷新授权才会生效</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+<h1 id="4、zookeeper-配置（重要）"><a href="#4、zookeeper-配置（重要）" class="headerlink" title="4、zookeeper 配置（重要）"></a>4、zookeeper 配置（重要）</h1><h2 id="4-1、进入-conf-目录，新增-data-和-log-文件夹"><a href="#4-1、进入-conf-目录，新增-data-和-log-文件夹" class="headerlink" title="4.1、进入 conf 目录，新增 data 和 log 文件夹"></a>4.1、进入 conf 目录，新增 data 和 log 文件夹</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd /opt/zookeeper/apache-zookeeper-3.8.4/conf</span><br><span class="line">mkdir data</span><br><span class="line">mkdir log</span><br><span class="line">ls</span><br><span class="line">configuration.xsl  data log logback.xml zoo_sample.cfg</span><br></pre></td></tr></table></figure>
 
-<h2 id="2-4、修改用户"><a href="#2-4、修改用户" class="headerlink" title="2.4、修改用户"></a>2.4、修改用户</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 查询用户信息</span><br><span class="line">select * from user Where User=&#x27;admin&#x27; and Host=&#x27;localhost&#x27;;</span><br><span class="line"># 方式一：将用户名 admin 更新为 admin_newm</span><br><span class="line">rename user &#x27;admin&#x27;@&#x27;localhost&#x27; to &#x27;admin_new&#x27;@&#x27;localhost&#x27;;</span><br><span class="line"># 方式二：将用户名 admin 更新为 admin_newm</span><br><span class="line">update user set User=&#x27;admin_new&#x27; where User=&#x27;admin&#x27; and Host=&#x27;localhost&#x27;;</span><br><span class="line"># 刷新授权才会生效</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+<h2 id="4-2、配置-zookeeper-配置文件"><a href="#4-2、配置-zookeeper-配置文件" class="headerlink" title="4.2、配置 zookeeper 配置文件"></a>4.2、配置 zookeeper 配置文件</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cp zoo_sample.cfg zoo.cfg</span><br><span class="line">ls</span><br><span class="line">configuration.xsl  data  logback.xml  zoo.cfg  zoo_sample.cfg</span><br></pre></td></tr></table></figure>
 
-<h2 id="2-5、删除用户"><a href="#2-5、删除用户" class="headerlink" title="2.5、删除用户"></a>2.5、删除用户</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 方式一：删除指定用户</span><br><span class="line">drop user &#x27;admin&#x27;@&#x27;localhost&#x27;;</span><br><span class="line"># 方式二：删除指定用户</span><br><span class="line">delete from user Where User=&#x27;admin&#x27; and Host=&#x27;localhost&#x27;;</span><br><span class="line"># 刷新授权才会生效</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim zoo.cfg</span><br></pre></td></tr></table></figure>
 
-<h1 id="3、操作用户权限"><a href="#3、操作用户权限" class="headerlink" title="3、操作用户权限"></a>3、操作用户权限</h1><h3 id="3-1、查看用户权限"><a href="#3-1、查看用户权限" class="headerlink" title="3.1、查看用户权限"></a>3.1、查看用户权限</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show grants for &#x27;admin&#x27;@&#x27;localhost&#x27;; </span><br></pre></td></tr></table></figure>
+<p>将文件配置成如下内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">The number of milliseconds of each tick</span></span><br><span class="line">tickTime=2000</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">The number of ticks that the initial</span> </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">synchronization phase can take</span></span><br><span class="line">initLimit=10</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">The number of ticks that can pass between</span> </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">sending a request and getting an acknowledgement</span></span><br><span class="line">syncLimit=5</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">the directory <span class="built_in">where</span> the snapshot is stored.</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="keyword">do</span> not use /tmp <span class="keyword">for</span> storage, /tmp here is just</span> </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">example sakes.</span></span><br><span class="line">dataDir=/opt/zookeeper/apache-zookeeper-3.8.4/conf/data</span><br><span class="line">dataLogDir=/opt/zookeeper/apache-zookeeper-3.8.4/conf/log</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">the port at <span class="built_in">which</span> the clients will connect</span></span><br><span class="line">clientPort=2181</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">the maximum number of client connections.</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">increase this <span class="keyword">if</span> you need to handle more clients</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">maxClientCnxns=60</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"></span></span><br><span class="line"><span class="language-bash"><span class="comment"># Be sure to read the maintenance section of the</span></span> </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">administrator guide before turning on autopurge.</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"></span></span><br><span class="line"><span class="language-bash"><span class="comment"># https://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_maintenance</span></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"></span></span><br><span class="line"><span class="language-bash"><span class="comment"># The number of snapshots to retain in dataDir</span></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">autopurge.snapRetainCount=3</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Purge task interval <span class="keyword">in</span> hours</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Set to <span class="string">&quot;0&quot;</span> to <span class="built_in">disable</span> auto purge feature</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">autopurge.purgeInterval=1</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment"># Metrics Providers</span></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"></span></span><br><span class="line"><span class="language-bash"><span class="comment"># https://prometheus.io Metrics Exporter</span></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">metricsProvider.httpHost=0.0.0.0</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">metricsProvider.httpPort=7000</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">metricsProvider.exportJvmInfo=<span class="literal">true</span></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">添加如下内容 server.x=A:B:C</span></span><br><span class="line">server.1=173.16.4.130:2888:3888</span><br><span class="line">server.2=173.16.4.131:2888:3888</span><br><span class="line">server.3=173.16.4.132:2888:3888</span><br></pre></td></tr></table></figure>
 
-<h2 id="3-2、修改用户权限"><a href="#3-2、修改用户权限" class="headerlink" title="3.2、修改用户权限"></a>3.2、修改用户权限</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 使admin用户获得所有权限。</span><br><span class="line">grant all privileges on *.* to &#x27;admin&#x27;@&#x27;localhost&#x27;;</span><br><span class="line"># 使admin用户获得所有数据库中所有表的(*.*)select、insert、update、delete权限</span><br><span class="line">grant select,insert,update,delete on *.* to &#x27;admin&#x27;@&#x27;localhost&#x27;;</span><br><span class="line"># 如果只想让该用户访问某一个数据库写成：testdb.* 即可</span><br><span class="line">grant all privileges on testdb.* to &#x27;admin&#x27;@&#x27;localhost&#x27;;</span><br><span class="line"># 刷新授权才会生效</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+<p>参数介绍：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>注释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>tickTime</td>
+<td>在运行过程中，Leader负责与ZK集群中所有机器进行通信，例如通过一些心跳检测机制，来检测机器的存活状态。如果L发出心跳包在syncLimit之后，还没有从F那里收到响应，那么就认为这个F已经不在线了。注意：不要把这个参数设置得过大，否则可能会掩盖一些问题。</td>
+</tr>
+<tr>
+<td>initLimit</td>
+<td>Follower在启动过程中，会从Leader同步所有最新数据，然后确定自己能够对外服务的起始状态。Leader允许 Follower 在 <strong>initLimit</strong> 时间内完成这个工作。通常情况下，我们不用太在意这个参数的设置。如果ZK集群的数据量确实很大了，F在启动的时候，从Leader上同步数据的时间也会相应变长，因此在这种情况下，有必要适当调大这个参数了。</td>
+</tr>
+<tr>
+<td>syncLimit</td>
+<td>有 5 （可配置）台机器可以同时运转。</td>
+</tr>
+<tr>
+<td>dataDir</td>
+<td>4.1 步骤中新增的 data 的路径。存储快照文件snapshot的目录。默认情况下，事务日志也会存储在这里。建议同时配置参数dataLogDir, 事务日志的写性能直接影响zk性能。</td>
+</tr>
+<tr>
+<td>clientPort</td>
+<td>客户端连接server的端口，即对外服务端口，一般设置为2181。</td>
+</tr>
+<tr>
+<td>server.1&#x3D;173.16.4.130:2888:3888</td>
+<td>第一台服务器 IP 地址</td>
+</tr>
+<tr>
+<td>server.2&#x3D;173.16.4.131:2888:3888</td>
+<td>第二台服务器 IP 地址</td>
+</tr>
+<tr>
+<td>server.3&#x3D;173.16.4.132:2888:3888</td>
+<td>第三台服务器 IP 地址</td>
+</tr>
+<tr>
+<td>server.x&#x3D;[hostname]:nnnnn[:nnnnn]</td>
+<td>这里的x是一个数字，与myid文件中的id是一致的。右边可以配置两个端口，第一个端口用于F和L之间的数据同步和其它通信，第二个端口用于Leader选举过程中投票通信。</td>
+</tr>
+</tbody></table>
+<p>​	<strong>注意： 2888 是Zookeeper 集群中服务器之间通信的端口，用于数据同步。3888 是Zookeeper 选举的端口，用于集群领导者选举时的通信。Zookeeper 集群中的 2888 和 3888 端口是可以修改的。你可以在 <code>zoo.cfg</code> 配置文件中更改这些端口，只需要确保所有节点的配置文件中的端口设置保持一致，并且新的端口没有被其他应用程序占用。</strong></p>
+<p>​	确保每个节点（每台服务器）上的防火墙允许 Zookeeper 使用的端口（2181, 2888, 3888）。</p>
+<p>​	开放防火墙端口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --zone=public --add-port=2181/tcp --permanent</span><br></pre></td></tr></table></figure>
 
-<h2 id="3-3、删除用户权限"><a href="#3-3、删除用户权限" class="headerlink" title="3.3、删除用户权限"></a>3.3、删除用户权限</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 删除amdin用户在本地访问mysql时的所有权限</span><br><span class="line">revoke all privileges on *.* from &#x27;admin&#x27;@&#x27;localhost&#x27;;</span><br><span class="line"># 删除amdin用户在本地访问mysql时的insert和update权限</span><br><span class="line">revoke insert,update on testdb.* from &#x27;admin&#x27;@&#x27;localhost&#x27;;</span><br><span class="line"># 刷新授权才会生效</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+<p>​	重启防火墙</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl status firewalld</span><br></pre></td></tr></table></figure>
 
-<h1 id="4、修改密码"><a href="#4、修改密码" class="headerlink" title="4、修改密码"></a>4、修改密码</h1>
+<p>​	查看防火墙开放的端口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --zone=public --list-ports</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4-3、配置-myid-文件-（重要）"><a href="#4-3、配置-myid-文件-（重要）" class="headerlink" title="4.3、配置 myid 文件 （重要）"></a>4.3、配置 myid 文件 （重要）</h2><p>​	在每台服务器上执行如下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /opt/zookeeper/apache-zookeeper-3.8.4/conf/data</span><br><span class="line">echo &quot;1&quot; &gt; myid</span><br></pre></td></tr></table></figure>
+
+<p>​	<strong>注意， echo “1” 中的数字，这个数字和 zoo.cfg 中配置的 server.x&#x3D;A:B:C 相同，根据各自的 ip 进行配置, 比如  173.16.4.130 配置的数字是1，173.16.4.131 配置的数字是2。</strong></p>
+<h1 id="5、启动zookeeper"><a href="#5、启动zookeeper" class="headerlink" title="5、启动zookeeper"></a>5、启动zookeeper</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">173.16.4.130</span></span><br><span class="line">[root@centos8 conf]# cd /opt/zookeeper/apache-zookeeper-3.8.4/bin/</span><br><span class="line">[root@centos8 bin]# ./zkServer.sh start /opt/zookeeper/apache-zookeeper-3.8.4/conf/zoo.cfg </span><br><span class="line">..启动内容省略...</span><br><span class="line">[root@centos8 bin]# ./zkServer.sh status</span><br><span class="line">ZooKeeper JMX enabled by default</span><br><span class="line">Using config: /opt/zookeeper/apache-zookeeper-3.8.4/bin/../conf/zoo.cfg</span><br><span class="line">Client port found: 2181. Client address: localhost. Client SSL: false.</span><br><span class="line">Mode: follower</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">173.16.4.131</span></span><br><span class="line">[root@centos8 conf]# cd /opt/zookeeper/apache-zookeeper-3.8.4/bin/</span><br><span class="line">[root@centos8 bin]# ./zkServer.sh start /opt/zookeeper/apache-zookeeper-3.8.4/conf/zoo.cfg </span><br><span class="line">..启动内容省略...</span><br><span class="line">[root@centos8 bin]# ./zkServer.sh status</span><br><span class="line">ZooKeeper JMX enabled by default</span><br><span class="line">Using config: /opt/zookeeper/apache-zookeeper-3.8.4/bin/../conf/zoo.cfg</span><br><span class="line">Client port found: 2182. Client address: localhost. Client SSL: false.</span><br><span class="line">Mode: leader</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">173.16.4.132</span></span><br><span class="line">[root@centos8 conf]# cd /opt/zookeeper/apache-zookeeper-3.8.4/bin/</span><br><span class="line">[root@centos8 bin]# ./zkServer.sh start /opt/zookeeper/apache-zookeeper-3.8.4/conf/zoo.cfg </span><br><span class="line">..启动内容省略...</span><br><span class="line">./zkServer.sh status</span><br><span class="line">ZooKeeper JMX enabled by default</span><br><span class="line">Using config: /opt/zookeeper/apache-zookeeper-3.8.4/bin/../conf/zoo.cfg</span><br><span class="line">Client port found: 2183. Client address: localhost. Client SSL: false.</span><br><span class="line">Mode: follower</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>注释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Mode: follower</td>
+<td>跟随者。</td>
+</tr>
+<tr>
+<td>Mode: leader</td>
+<td>领导者。</td>
+</tr>
+</tbody></table>
+<h1 id="6、集群角色"><a href="#6、集群角色" class="headerlink" title="6、集群角色"></a>6、集群角色</h1><p>​	Leader：领导者</p>
+<p>​	事物请求（写操作）的唯一调度者和处理者，保证集群事务处理的顺序性；集群内部各个服务器的调度者。对于 create、setData、delete 等有写操作的请求，则统一转发给 leader 处理，leader 需要决定编号、执行操作，这个过程称为事物。</p>
+<p>​	Follower： 跟随者</p>
+<p>​	处理客户端非事物（读操作）请求（可以直接响应），转发事物请求给 Leader ；参与集群 Leader 选举投票。</p>
+<p>​	Observer: 观察者</p>
+<p>​	对于非事物请求可以独立处理（读操作），对于事物请求会转发给 Leader 处理， Observer 节点接收来自 Leader 的 inform 信息，更新自己本地的缓存，不参与提交和选举投票。通常在不影响集群事务处理能力的前提下提升集群的非事物处理能力。</p>
+<h1 id="7、增加systemd管理zookeeper功能"><a href="#7、增加systemd管理zookeeper功能" class="headerlink" title="7、增加systemd管理zookeeper功能"></a>7、增加systemd管理zookeeper功能</h1><h2 id="7-1、新建-service-文件"><a href="#7-1、新建-service-文件" class="headerlink" title="7.1、新建 service 文件"></a>7.1、新建 service 文件</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 /]# vim /etc/systemd/system/zookeeper.service</span><br></pre></td></tr></table></figure>
+
+<p>​	在文件中新增以下内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=zookeeper.service</span><br><span class="line">After=network.target</span><br><span class="line">ConditionPathExists=/opt/zookeeper/apache-zookeeper-3.8.4/conf/zoo.cfg</span><br><span class="line">[Service]</span><br><span class="line">Type=forking</span><br><span class="line">User=root</span><br><span class="line">Group=root</span><br><span class="line">ExecStart=/opt/zookeeper/apache-zookeeper-3.8.4/bin/zkServer.sh start</span><br><span class="line">ExecStop=/opt/zookeeper/apache-zookeeper-3.8.4/bin/zkServer.sh stop</span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+
+<p>​	执行以下命令重启守护线程：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 /]# systemctl daemon-reload</span><br></pre></td></tr></table></figure>
+
+<h2 id="7-2、修改-zkEnv-sh-文件"><a href="#7-2、修改-zkEnv-sh-文件" class="headerlink" title="7.2、修改 zkEnv.sh 文件"></a>7.2、修改 zkEnv.sh 文件</h2><p>​	直接使用systemctl启动zookeeper会因找不到java的路径报错，我们需要手动修改 zkEnv.sh 文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 /]# vim /opt/zookeeper/apache-zookeeper-3.8.4/bin/zkEnv.sh</span><br></pre></td></tr></table></figure>
+
+<p>​	编辑如下内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">添加如下一行</span></span><br><span class="line">JAVA_HOME=/usr/lib/jvm/java</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">到此两行上方即可:</span></span><br><span class="line">ZOOBINDIR=&quot;$&#123;ZOOBINDIR:-/usr/bin&#125;&quot;</span><br><span class="line">ZOOKEEPER_PREFIX=&quot;$&#123;ZOOBINDIR&#125;/..&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="7-3、启动和停止"><a href="#7-3、启动和停止" class="headerlink" title="7.3、启动和停止"></a>7.3、启动和停止</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost conf]# systemctl start zookeeper</span><br><span class="line">[root@localhost conf]# systemctl stop zookeeper</span><br></pre></td></tr></table></figure>
+
+<h1 id="8、开机自启"><a href="#8、开机自启" class="headerlink" title="8、开机自启"></a>8、开机自启</h1><p>​	执行以下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost conf]# systemctl enable zookeeper</span><br></pre></td></tr></table></figure>
+
+
       
 
       
@@ -235,7 +337,11 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">mysql</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">原创</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">zookeeper</a>
         		</li>
       		
 		</ul>
@@ -291,7 +397,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2024/06/04/mysql8%E9%85%8D%E7%BD%AE%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2024/07/25/zookeeper%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -305,15 +411,11 @@
   
 <nav id="article-nav">
   
-    <a href="/2024/07/02/MySQL%E4%BC%98%E5%8C%96%E4%B9%8BEXPLAIN%E5%91%BD%E4%BB%A4%E8%A7%A3%E6%9E%90/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          MySQL优化之EXPLAIN命令解析
-        
-      </div>
-    </a>
   
+    <a href="/2024/07/02/MySQL%E4%BC%98%E5%8C%96%E4%B9%8BEXPLAIN%E5%91%BD%E4%BB%A4%E8%A7%A3%E6%9E%90/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">MySQL优化之EXPLAIN命令解析</div>
+      <i class="icon-circle-right"></i>
+    </a>
   
 </nav>
 
@@ -338,7 +440,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1%E3%80%81%E7%99%BB%E5%BD%95mysql"><span class="toc-number">1.</span> <span class="toc-text">1、登录mysql</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2%E3%80%81%E7%94%A8%E6%88%B7%E6%93%8D%E4%BD%9C"><span class="toc-number">2.</span> <span class="toc-text">2、用户操作</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1%E3%80%81%E6%9F%A5%E7%9C%8B%E7%94%A8%E6%88%B7"><span class="toc-number">2.1.</span> <span class="toc-text">2.1、查看用户</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2%E3%80%81%E5%88%9B%E5%BB%BA%E6%9C%AC%E5%9C%B0%E7%94%A8%E6%88%B7"><span class="toc-number">2.2.</span> <span class="toc-text">2.2、创建本地用户</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3%E3%80%81%E5%88%9B%E5%BB%BA%E5%A4%96%E7%BD%91%E5%8F%AF%E8%AE%BF%E9%97%AE%E7%9A%84%E7%94%A8%E6%88%B7"><span class="toc-number">2.3.</span> <span class="toc-text">2.3、创建外网可访问的用户</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4%E3%80%81%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7"><span class="toc-number">2.4.</span> <span class="toc-text">2.4、修改用户</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-5%E3%80%81%E5%88%A0%E9%99%A4%E7%94%A8%E6%88%B7"><span class="toc-number">2.5.</span> <span class="toc-text">2.5、删除用户</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3%E3%80%81%E6%93%8D%E4%BD%9C%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90"><span class="toc-number">3.</span> <span class="toc-text">3、操作用户权限</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1%E3%80%81%E6%9F%A5%E7%9C%8B%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90"><span class="toc-number">3.0.1.</span> <span class="toc-text">3.1、查看用户权限</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2%E3%80%81%E4%BF%AE%E6%94%B9%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90"><span class="toc-number">3.1.</span> <span class="toc-text">3.2、修改用户权限</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3%E3%80%81%E5%88%A0%E9%99%A4%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90"><span class="toc-number">3.2.</span> <span class="toc-text">3.3、删除用户权限</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4%E3%80%81%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81"><span class="toc-number">4.</span> <span class="toc-text">4、修改密码</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1%E3%80%81%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-number">1.</span> <span class="toc-text">1、准备工作</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2%E3%80%81%E4%B8%8B%E8%BD%BD-zookeeper%E5%B9%B6%E8%A7%A3%E5%8E%8B"><span class="toc-number">2.</span> <span class="toc-text">2、下载 zookeeper并解压</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3%E3%80%81%E8%A7%A3%E5%8E%8B"><span class="toc-number">3.</span> <span class="toc-text">3、解压</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4%E3%80%81zookeeper-%E9%85%8D%E7%BD%AE%EF%BC%88%E9%87%8D%E8%A6%81%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">4、zookeeper 配置（重要）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1%E3%80%81%E8%BF%9B%E5%85%A5-conf-%E7%9B%AE%E5%BD%95%EF%BC%8C%E6%96%B0%E5%A2%9E-data-%E5%92%8C-log-%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="toc-number">4.1.</span> <span class="toc-text">4.1、进入 conf 目录，新增 data 和 log 文件夹</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-2%E3%80%81%E9%85%8D%E7%BD%AE-zookeeper-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">4.2.</span> <span class="toc-text">4.2、配置 zookeeper 配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-3%E3%80%81%E9%85%8D%E7%BD%AE-myid-%E6%96%87%E4%BB%B6-%EF%BC%88%E9%87%8D%E8%A6%81%EF%BC%89"><span class="toc-number">4.3.</span> <span class="toc-text">4.3、配置 myid 文件 （重要）</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5%E3%80%81%E5%90%AF%E5%8A%A8zookeeper"><span class="toc-number">5.</span> <span class="toc-text">5、启动zookeeper</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6%E3%80%81%E9%9B%86%E7%BE%A4%E8%A7%92%E8%89%B2"><span class="toc-number">6.</span> <span class="toc-text">6、集群角色</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#7%E3%80%81%E5%A2%9E%E5%8A%A0systemd%E7%AE%A1%E7%90%86zookeeper%E5%8A%9F%E8%83%BD"><span class="toc-number">7.</span> <span class="toc-text">7、增加systemd管理zookeeper功能</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#7-1%E3%80%81%E6%96%B0%E5%BB%BA-service-%E6%96%87%E4%BB%B6"><span class="toc-number">7.1.</span> <span class="toc-text">7.1、新建 service 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-2%E3%80%81%E4%BF%AE%E6%94%B9-zkEnv-sh-%E6%96%87%E4%BB%B6"><span class="toc-number">7.2.</span> <span class="toc-text">7.2、修改 zkEnv.sh 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-3%E3%80%81%E5%90%AF%E5%8A%A8%E5%92%8C%E5%81%9C%E6%AD%A2"><span class="toc-number">7.3.</span> <span class="toc-text">7.3、启动和停止</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#8%E3%80%81%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF"><span class="toc-number">8.</span> <span class="toc-text">8、开机自启</span></a></li></ol>
                     </div>
                 </span>
             </div>
