@@ -6,18 +6,23 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Tag: mysql | 个人博客</title>
+  <title>nacos集群部署 | 个人博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Spring Boot">
-<meta property="og:type" content="website">
-<meta property="og:title" content="个人博客">
-<meta property="og:url" content="http://example.com/tags/mysql/index.html">
+  <meta name="description" content="本文主要介绍在Centos8 系统中部署 nacos2.2.1集群。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nacos集群部署">
+<meta property="og:url" content="http://example.com/2024/07/27/nacos%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/index.html">
 <meta property="og:site_name" content="个人博客">
-<meta property="og:description" content="Spring Boot">
+<meta property="og:description" content="本文主要介绍在Centos8 系统中部署 nacos2.2.1集群。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/nacos.jpg">
+<meta property="article:published_time" content="2024-07-27T12:01:18.000Z">
+<meta property="article:modified_time" content="2024-07-27T12:23:23.511Z">
 <meta property="article:author" content="wzd">
-<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="原创">
+<meta property="article:tag" content="nacos">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/nacos.jpg">
   
     <link rel="alternative" href="/atom.xml" title="个人博客" type="application/atom+xml">
   
@@ -153,98 +158,305 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-nacos集群部署" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2024" class="archive-year">2024</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2024/07/02/MySQL%E4%BC%98%E5%8C%96%E4%B9%8BEXPLAIN%E5%91%BD%E4%BB%A4%E8%A7%A3%E6%9E%90/" class="archive-article-date">
-  	<time datetime="2024-07-02T08:58:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-07-02</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2024/07/02/MySQL%E4%BC%98%E5%8C%96%E4%B9%8BEXPLAIN%E5%91%BD%E4%BB%A4%E8%A7%A3%E6%9E%90/">MySQL优化之EXPLAIN命令解析</a>
+    <h1 class="article-title" itemprop="name">
+      nacos集群部署
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2024/07/27/nacos%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/" class="archive-article-date">
+  	<time datetime="2024-07-27T12:01:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-07-27</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <pre><code>本文主要介绍在Centos8 系统中部署 nacos2.2.1集群。
+</code></pre>
+<span id="more"></span>
+
+<h1 id="一、环境准备"><a href="#一、环境准备" class="headerlink" title="一、环境准备"></a>一、环境准备</h1><h2 id="1-1、版本说明"><a href="#1-1、版本说明" class="headerlink" title="1.1、版本说明"></a>1.1、版本说明</h2><table>
+<thead>
+<tr>
+<th>组件</th>
+<th>版本</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Centos</td>
+<td>CentOS Linux release 8.4.2105</td>
+<td>请自行搜索安装</td>
+</tr>
+<tr>
+<td>Nacos</td>
+<td>2.2.1</td>
+<td></td>
+</tr>
+<tr>
+<td>Mysql</td>
+<td>8.0.37</td>
+<td>请自行搜索安装</td>
+</tr>
+<tr>
+<td>openjdk</td>
+<td>1.8.0_312-b07</td>
+<td>请自行搜索配置</td>
+</tr>
+</tbody></table>
+<h2 id="1-2、服务部署规划"><a href="#1-2、服务部署规划" class="headerlink" title="1.2、服务部署规划"></a>1.2、服务部署规划</h2><table>
+<thead>
+<tr>
+<th>主机名</th>
+<th>IP</th>
+<th>部署端口</th>
+<th>路径</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Centos8</td>
+<td>173.16.4.130</td>
+<td>8848</td>
+<td>&#x2F;opt&#x2F;nacos</td>
+<td>nacos1</td>
+</tr>
+<tr>
+<td>Centos8(2)</td>
+<td>173.16.4.131</td>
+<td>8848</td>
+<td>&#x2F;opt&#x2F;nacos</td>
+<td>nacos2</td>
+</tr>
+<tr>
+<td>Centos8(3)</td>
+<td>173.16.4.132</td>
+<td>8848</td>
+<td>&#x2F;opt&#x2F;nacos</td>
+<td>Nacos3</td>
+</tr>
+<tr>
+<td>Mac</td>
+<td>127.0.0.1</td>
+<td>3305</td>
+<td>～</td>
+<td>本人在mac电脑中使用docker部署了mysql，端口为3305</td>
+</tr>
+</tbody></table>
+<h1 id="二、部署安装"><a href="#二、部署安装" class="headerlink" title="二、部署安装"></a>二、部署安装</h1><h2 id="2-1、下载并解压"><a href="#2-1、下载并解压" class="headerlink" title="2.1、下载并解压"></a>2.1、下载并解压</h2><p>​	下载 nacos-server-2.2.1.tar.gz ，将压缩包拷贝到服务器中并解压。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 /]# cd /opt/nacos/</span><br><span class="line">[root@centos8 nacos]# ls</span><br><span class="line">nacos-server-2.2.1.tar.gz</span><br><span class="line">[root@centos8 nacos]# tar -zxvf nacos-server-2.2.1.tar.gz</span><br><span class="line">[root@centos8 nacos]# ls</span><br><span class="line">[root@centos8 nacos]# nacos  nacos-server-2.2.1.tar.gz</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-2、配置"><a href="#2-2、配置" class="headerlink" title="2.2、配置"></a>2.2、配置</h2><p>​	<strong>集群配置</strong></p>
+<p>​	进入 nacos 的 conf 目录，将 cluster.conf.example 拷贝一份，并对 cluster.conf 进行编辑。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 nacos]# cd nacos/conf/</span><br><span class="line">[root@centos8 conf]# cp cluster.conf.example cluster.conf</span><br><span class="line">[root@centos8 conf]# ll</span><br><span class="line">-rw-r--r--. 1  502 games  1224 3月  13 2023 1.4.0-ipv6_support-update.sql</span><br><span class="line">-rw-r--r--. 1  502 games 10900 7月  27 21:46 application.properties</span><br><span class="line">-rw-r--r--. 1  502 games  9435 3月  17 2023 application.properties.example</span><br><span class="line">-rw-r--r--. 1 root root     79 7月  27 21:47 cluster.conf</span><br><span class="line">-rw-r--r--. 1  502 games   670 3月  17 2023 cluster.conf.example</span><br><span class="line">-rw-r--r--. 1  502 games  8939 3月  17 2023 derby-schema.sql</span><br><span class="line">-rw-r--r--. 1  502 games 10825 3月  17 2023 mysql-schema.sql</span><br><span class="line">-rw-r--r--. 1  502 games 31156 3月  17 2023 nacos-logback.xml</span><br><span class="line">[root@centos8 conf]# vim cluster.conf</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>​	修改内容如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">2024-07-27T21:47:11.817</span></span><br><span class="line">173.16.4.130:8848</span><br><span class="line">173.16.4.131:8848</span><br><span class="line">173.16.4.132:8848</span><br></pre></td></tr></table></figure>
+
+<p>​	 这里是我们在服务器上运行的三台 nacos 服务实力，IP 地址就是 步骤 1.2 的三个地址。端口号为步骤 1.2 的三个端口号。</p>
+<p>​	<strong>文件属性配置</strong></p>
+<p>​	文件属性配置主要修改 application.properties 文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 conf]# vim application.properties</span><br></pre></td></tr></table></figure>
+
+<p>​	数据源配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#*************** Config Module Related Configurations ***************#</span></span><br><span class="line"><span class="comment">### If use MySQL as datasource:</span></span><br><span class="line"><span class="comment">### Deprecated configuration property, it is recommended to use `spring.sql.init.platform` replaced.</span></span><br><span class="line"><span class="attr">spring.datasource.platform</span>=<span class="string">mysql</span></span><br><span class="line"><span class="comment">#spring.sql.init.platform=mysql</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">### Count of DB:</span></span><br><span class="line"><span class="attr">db.num</span>=<span class="string">1</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">### Connect URL of DB:</span></span><br><span class="line"><span class="attr">db.url.0</span>=<span class="string">jdbc:mysql://192.168.15.89:3305/nacos?characterEncoding=utf8&amp;connectTimeout=1000&amp;socketTimeout=3000&amp;autoReconnect=true&amp;useUnicode=true&amp;useSSL=false&amp;serverTimezone=UTC</span></span><br><span class="line"><span class="attr">db.user</span>=<span class="string">root</span></span><br><span class="line"><span class="attr">db.password</span>=<span class="string">123456</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">### Connection pool configuration: hikariCP</span></span><br><span class="line"><span class="attr">db.pool.config.connectionTimeout</span>=<span class="string">30000</span></span><br><span class="line"><span class="attr">db.pool.config.validationTimeout</span>=<span class="string">10000</span></span><br><span class="line"><span class="attr">db.pool.config.maximumPoolSize</span>=<span class="string">20</span></span><br><span class="line"><span class="attr">db.pool.config.minimumIdle</span>=<span class="string">2</span></span><br></pre></td></tr></table></figure>
+
+<p>​	鉴权配置：</p>
+<p>​	nacos 提供鉴权实现，我们需要开启鉴权，同时自定义用于生成 JWT 令牌的密钥。1.4.1 版本开始，nacos添加服务身份识别功能，用户可以自己配置服务端的 identity， 不再使用 userAgent 作为服务端请求的判断标准。</p>
+<p>​	配置信息如下：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">### The auth system to use, currently only &#x27;nacos&#x27; and &#x27;ldap&#x27; is supported:</span></span><br><span class="line"><span class="attr">nacos.core.auth.system.type</span>=<span class="string">nacos</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">### If turn on auth system:</span></span><br><span class="line"><span class="attr">nacos.core.auth.enabled</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">### Since 1.4.1, worked when nacos.core.auth.enabled=true and nacos.core.auth.enable.userAgentAuthWhite=false.</span></span><br><span class="line"><span class="comment">### The two properties is the white list for auth and used by identity the request from other server.</span></span><br><span class="line"><span class="attr">nacos.core.auth.server.identity.key</span>=<span class="string">nacos</span></span><br><span class="line"><span class="attr">nacos.core.auth.server.identity.value</span>=<span class="string">nacos</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">### The default token (Base64 String):</span></span><br><span class="line"><span class="attr">nacos.core.auth.plugin.nacos.token.secret.key</span>=<span class="string">U2VjcmV0S2V5aGFma3NhZmtkYWtma2FrZmFranNkZml3dWJzZGZhc2RmYXNkZiA=</span></span><br></pre></td></tr></table></figure>
+
+<p>​	<strong>注意：集群中的所有配置文件都要配置相同的 server.identity 信息，否则可能导致服务端之间数据不一致或无法删除实例等问题。具具体可以参考 <a target="_blank" rel="noopener" href="https://nacos.io/zh-cn/docs/v2/guide/user/auth.html">https://nacos.io/zh-cn/docs/v2/guide/user/auth.html</a> 开启服务身份识别功能模块。</strong> </p>
+<h2 id="2-3、启动"><a href="#2-3、启动" class="headerlink" title="2.3、启动"></a>2.3、启动</h2><p>​	进入 bin 目录，启动nacos。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 bin]# ./startup.sh </span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk/bin/java -Djava.ext.dirs=/usr/lib/jvm/java-1.8.0-openjdk/jre/lib/ext:/usr/lib/jvm/java-1.8.0-openjdk/lib/ext  -server -Xms2g -Xmx2g -Xmn1g -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m -XX:-OmitStackTraceInFastThrow -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/nacos/nacos/logs/java_heapdump.hprof -XX:-UseLargePages -Dnacos.member.list= -Xloggc:/opt/nacos/nacos/logs/nacos_gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M -Dloader.path=/opt/nacos/nacos/plugins,/opt/nacos/nacos/plugins/health,/opt/nacos/nacos/plugins/cmdb,/opt/nacos/nacos/plugins/selector -Dnacos.home=/opt/nacos/nacos -jar /opt/nacos/nacos/target/nacos-server.jar  --spring.config.additional-location=file:/opt/nacos/nacos/conf/ --logging.config=/opt/nacos/nacos/conf/nacos-logback.xml --server.max-http-header-size=524288</span><br><span class="line">nacos is starting with cluster</span><br><span class="line">nacos is starting，you can check the /opt/nacos/nacos/logs/start.out</span><br></pre></td></tr></table></figure>
+
+<p>查看启动日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 logs]# cd /opt/nacos/nacos/logs/</span><br><span class="line">[root@centos8 logs]# tail -2000f start.out </span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk/bin/java -Djava.ext.dirs=/usr/lib/jvm/java-1.8.0-openjdk/jre/lib/ext:/usr/lib/jvm/java-1.8.0-openjdk/lib/ext  -server -Xms2g -Xmx2g -Xmn1g -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m -XX:-OmitStackTraceInFastThrow -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/nacos/nacos/logs/java_heapdump.hprof -XX:-UseLargePages -Dnacos.member.list= -Xloggc:/opt/nacos/nacos/logs/nacos_gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M -Dloader.path=/opt/nacos/nacos/plugins,/opt/nacos/nacos/plugins/health,/opt/nacos/nacos/plugins/cmdb,/opt/nacos/nacos/plugins/selector -Dnacos.home=/opt/nacos/nacos -jar /opt/nacos/nacos/target/nacos-server.jar  --spring.config.additional-location=file:/opt/nacos/nacos/conf/ --logging.config=/opt/nacos/nacos/conf/nacos-logback.xml --server.max-http-header-size=524288</span><br><span class="line"></span><br><span class="line">         ,--.</span><br><span class="line">       ,--.&#x27;|</span><br><span class="line">   ,--,:  : |                                           Nacos 2.2.1</span><br><span class="line">,`--.&#x27;`|  &#x27; :                       ,---.               Running in cluster mode, All function modules</span><br><span class="line">|   :  :  | |                      &#x27;   ,&#x27;\   .--.--.    Port: 8848</span><br><span class="line">:   |   \ | :  ,--.--.     ,---.  /   /   | /  /    &#x27;   Pid: 7398</span><br><span class="line">|   : &#x27;  &#x27;; | /       \   /     \.   ; ,. :|  :  /`./   Console: http://173.16.4.130:8848/nacos/index.html</span><br><span class="line">&#x27;   &#x27; ;.    ;.--.  .-. | /    / &#x27;&#x27;   | |: :|  :  ;_</span><br><span class="line">|   | | \   | \__\/: . ..    &#x27; / &#x27;   | .; : \  \    `.      https://nacos.io</span><br><span class="line">&#x27;   : |  ; .&#x27; ,&quot; .--.; |&#x27;   ; :__|   :    |  `----.   \</span><br><span class="line">|   | &#x27;`--&#x27;  /  /  ,.  |&#x27;   | &#x27;.&#x27;|\   \  /  /  /`--&#x27;  /</span><br><span class="line">&#x27;   : |     ;  :   .&#x27;   \   :    : `----&#x27;  &#x27;--&#x27;.     /</span><br><span class="line">;   |.&#x27;     |  ,     .-./\   \  /            `--&#x27;---&#x27;</span><br><span class="line">&#x27;---&#x27;        `--`---&#x27;     `----&#x27;</span><br><span class="line"></span><br><span class="line">2024-07-27 23:10:56,152 INFO The server IP list of Nacos is [173.16.4.130:8848, 173.16.4.131:8848, 173.16.4.132:8848]</span><br><span class="line"></span><br><span class="line">2024-07-27 23:10:57,153 INFO Nacos is starting...</span><br></pre></td></tr></table></figure>
+
+<p>​	nacos 以集群方式启动，登陆控制台 （<a target="_blank" rel="noopener" href="http://173.16.4.130:8848/nacos/index.htm%EF%BC%89%EF%BC%8C%E5%A6%82%E4%B8%8B%E5%9B%BE">http://173.16.4.130:8848/nacos/index.htm），如下图</a>:</p>
+<p><img src="/nacos.jpg" alt="nacos"></p>
+<p>按照上述操作启动其他两台 nacos，当启动其他的 nacos 服务时，节点状态会从 DOWN 变为 UP。</p>
+<h1 id="三、增加systemd管理"><a href="#三、增加systemd管理" class="headerlink" title="三、增加systemd管理"></a>三、增加systemd管理</h1><h2 id="3-1、-编写启动文件"><a href="#3-1、-编写启动文件" class="headerlink" title="3.1、 编写启动文件"></a>3.1、 编写启动文件</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 ~]# vim /etc/systemd/system/nacos.service</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-2、在文件中写入以下内容"><a href="#3-2、在文件中写入以下内容" class="headerlink" title="3.2、在文件中写入以下内容"></a>3.2、在文件中写入以下内容</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=nacos</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=forking</span><br><span class="line">ExecStart=/opt/nacos/nacos/bin/startup.sh</span><br><span class="line">ExecReload=/opt/nacos/bacos/bin/shutdown.sh</span><br><span class="line">ExecStop=/opt/nacos/bin/shutdown.sh</span><br><span class="line">PrivateTmp=true</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+
+<p>​	其中 &#x2F;opt&#x2F;nacos 为本机按照的 nacos 文件路径，-m standalone，表示作为单机启动，不加代表以集群启动，此处以集群启动。</p>
+<h2 id="3-3、设置开机启动"><a href="#3-3、设置开机启动" class="headerlink" title="3.3、设置开机启动"></a>3.3、设置开机启动</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">重启守护现场，进行文件生效配置</span></span><br><span class="line">[root@centos8 ~]# systemctl daemon-reload</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置为开机启动</span></span><br><span class="line">[root@centos8 ~]# systemctl enable nacos.service</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启动 nacos 服务</span></span><br><span class="line">[root@centos8 ~]# systemctl start nacos.service</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">停止 nacos 服务</span></span><br><span class="line">[root@centos8 ~]# systemctl stop nacos.service  </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">重启服务器</span></span><br><span class="line">[root@centos8 ~]# reboot </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看 nacos 状态</span></span><br><span class="line">[root@centos8 ~]# systemctl status nacos.service</span><br></pre></td></tr></table></figure>
+
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/assets/alipay.jpg">
+                      <span class="reward-type">支付宝</span>
+                    </div>
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/assets/wechat.jpg">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">mysql</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">原创</a>
         		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2024/06/04/mysql8%E9%85%8D%E7%BD%AE%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90/" class="archive-article-date">
-  	<time datetime="2024-06-04T08:14:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2024-06-04</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2024/06/04/mysql8%E9%85%8D%E7%BD%AE%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90/">mysql8配置用户权限</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
+      		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">mysql</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">nacos</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2024/07/27/nacos%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2024/07/25/zookeeper%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">zookeeper集群搭建</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">1.</span> <span class="toc-text">一、环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1%E3%80%81%E7%89%88%E6%9C%AC%E8%AF%B4%E6%98%8E"><span class="toc-number">1.1.</span> <span class="toc-text">1.1、版本说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2%E3%80%81%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2%E8%A7%84%E5%88%92"><span class="toc-number">1.2.</span> <span class="toc-text">1.2、服务部署规划</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E9%83%A8%E7%BD%B2%E5%AE%89%E8%A3%85"><span class="toc-number">2.</span> <span class="toc-text">二、部署安装</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1%E3%80%81%E4%B8%8B%E8%BD%BD%E5%B9%B6%E8%A7%A3%E5%8E%8B"><span class="toc-number">2.1.</span> <span class="toc-text">2.1、下载并解压</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2%E3%80%81%E9%85%8D%E7%BD%AE"><span class="toc-number">2.2.</span> <span class="toc-text">2.2、配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3%E3%80%81%E5%90%AF%E5%8A%A8"><span class="toc-number">2.3.</span> <span class="toc-text">2.3、启动</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%A2%9E%E5%8A%A0systemd%E7%AE%A1%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">三、增加systemd管理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1%E3%80%81-%E7%BC%96%E5%86%99%E5%90%AF%E5%8A%A8%E6%96%87%E4%BB%B6"><span class="toc-number">3.1.</span> <span class="toc-text">3.1、 编写启动文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2%E3%80%81%E5%9C%A8%E6%96%87%E4%BB%B6%E4%B8%AD%E5%86%99%E5%85%A5%E4%BB%A5%E4%B8%8B%E5%86%85%E5%AE%B9"><span class="toc-number">3.2.</span> <span class="toc-text">3.2、在文件中写入以下内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3%E3%80%81%E8%AE%BE%E7%BD%AE%E5%BC%80%E6%9C%BA%E5%90%AF%E5%8A%A8"><span class="toc-number">3.3.</span> <span class="toc-text">3.3、设置开机启动</span></a></li></ol></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -267,9 +479,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
