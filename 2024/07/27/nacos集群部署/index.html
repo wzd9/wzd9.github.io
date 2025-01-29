@@ -1,0 +1,276 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>nacos集群部署 | 飞光</title><meta name="author" content="wzd"><meta name="copyright" content="wzd"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本文主要介绍在Centos8 系统中部署 nacos2.2.1集群。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nacos集群部署">
+<meta property="og:url" content="http://example.com/2024/07/27/nacos%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/index.html">
+<meta property="og:site_name" content="飞光">
+<meta property="og:description" content="本文主要介绍在Centos8 系统中部署 nacos2.2.1集群。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/topImg/IMG_6478.PNG">
+<meta property="article:published_time" content="2024-07-27T12:01:18.000Z">
+<meta property="article:modified_time" content="2025-01-29T06:14:53.729Z">
+<meta property="article:author" content="wzd">
+<meta property="article:tag" content="nacos">
+<meta property="article:tag" content="原创">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/topImg/IMG_6478.PNG"><link rel="shortcut icon" href="/images/logo.png"><link rel="canonical" href="http://example.com/2024/07/27/nacos%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":30,"languages":{"author":"作者: wzd","link":"链接: ","source":"来源: 飞光","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'nacos集群部署',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  isShuoshuo: false
+}</script><meta name="generator" content="Hexo 7.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/loading.gif" data-original="/images/logo.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">16</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">18</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/comment/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于笔者</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/images/topImg/IMG_6479.PNG);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">飞光</span></a><a class="nav-page-title" href="/"><span class="site-name">nacos集群部署</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fa fa-graduation-cap"></i><span> 博文</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/comment/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于笔者</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">nacos集群部署</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-07-27T12:01:18.000Z" title="发表于 2024-07-27 20:01:18">2024-07-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-01-29T06:14:53.729Z" title="更新于 2025-01-29 14:14:53">2025-01-29</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/nacos/">nacos</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">1.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>8分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><pre><code>本文主要介绍在Centos8 系统中部署 nacos2.2.1集群。
+</code></pre>
+<span id="more"></span>
+
+<h1 id="一、环境准备"><a href="#一、环境准备" class="headerlink" title="一、环境准备"></a>一、环境准备</h1><h2 id="1-1、版本说明"><a href="#1-1、版本说明" class="headerlink" title="1.1、版本说明"></a>1.1、版本说明</h2><table>
+<thead>
+<tr>
+<th>组件</th>
+<th>版本</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Centos</td>
+<td>CentOS Linux release 8.4.2105</td>
+<td>请自行搜索安装</td>
+</tr>
+<tr>
+<td>Nacos</td>
+<td>2.2.1</td>
+<td></td>
+</tr>
+<tr>
+<td>Mysql</td>
+<td>8.0.37</td>
+<td>请自行搜索安装</td>
+</tr>
+<tr>
+<td>openjdk</td>
+<td>1.8.0_312-b07</td>
+<td>请自行搜索配置</td>
+</tr>
+</tbody></table>
+<h2 id="1-2、服务部署规划"><a href="#1-2、服务部署规划" class="headerlink" title="1.2、服务部署规划"></a>1.2、服务部署规划</h2><table>
+<thead>
+<tr>
+<th>主机名</th>
+<th>IP</th>
+<th>部署端口</th>
+<th>路径</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Centos8</td>
+<td>173.16.4.130</td>
+<td>8848</td>
+<td>&#x2F;opt&#x2F;nacos</td>
+<td>nacos1</td>
+</tr>
+<tr>
+<td>Centos8(2)</td>
+<td>173.16.4.131</td>
+<td>8848</td>
+<td>&#x2F;opt&#x2F;nacos</td>
+<td>nacos2</td>
+</tr>
+<tr>
+<td>Centos8(3)</td>
+<td>173.16.4.132</td>
+<td>8848</td>
+<td>&#x2F;opt&#x2F;nacos</td>
+<td>Nacos3</td>
+</tr>
+<tr>
+<td>Mac</td>
+<td>127.0.0.1</td>
+<td>3305</td>
+<td>～</td>
+<td>本人在mac电脑中使用docker部署了mysql，端口为3305</td>
+</tr>
+</tbody></table>
+<h1 id="二、部署安装"><a href="#二、部署安装" class="headerlink" title="二、部署安装"></a>二、部署安装</h1><h2 id="2-1、下载并解压"><a href="#2-1、下载并解压" class="headerlink" title="2.1、下载并解压"></a>2.1、下载并解压</h2><p>​	下载 nacos-server-2.2.1.tar.gz ，将压缩包拷贝到服务器中并解压。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 /]# cd /opt/nacos/</span><br><span class="line">[root@centos8 nacos]# ls</span><br><span class="line">nacos-server-2.2.1.tar.gz</span><br><span class="line">[root@centos8 nacos]# tar -zxvf nacos-server-2.2.1.tar.gz</span><br><span class="line">[root@centos8 nacos]# ls</span><br><span class="line">[root@centos8 nacos]# nacos  nacos-server-2.2.1.tar.gz</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-2、配置"><a href="#2-2、配置" class="headerlink" title="2.2、配置"></a>2.2、配置</h2><p>​	<strong>集群配置</strong></p>
+<p>​	进入 nacos 的 conf 目录，将 cluster.conf.example 拷贝一份，并对 cluster.conf 进行编辑。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 nacos]# cd nacos/conf/</span><br><span class="line">[root@centos8 conf]# cp cluster.conf.example cluster.conf</span><br><span class="line">[root@centos8 conf]# ll</span><br><span class="line">-rw-r--r--. 1  502 games  1224 3月  13 2023 1.4.0-ipv6_support-update.sql</span><br><span class="line">-rw-r--r--. 1  502 games 10900 7月  27 21:46 application.properties</span><br><span class="line">-rw-r--r--. 1  502 games  9435 3月  17 2023 application.properties.example</span><br><span class="line">-rw-r--r--. 1 root root     79 7月  27 21:47 cluster.conf</span><br><span class="line">-rw-r--r--. 1  502 games   670 3月  17 2023 cluster.conf.example</span><br><span class="line">-rw-r--r--. 1  502 games  8939 3月  17 2023 derby-schema.sql</span><br><span class="line">-rw-r--r--. 1  502 games 10825 3月  17 2023 mysql-schema.sql</span><br><span class="line">-rw-r--r--. 1  502 games 31156 3月  17 2023 nacos-logback.xml</span><br><span class="line">[root@centos8 conf]# vim cluster.conf</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>​	修改内容如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">2024-07-27T21:47:11.817</span></span><br><span class="line">173.16.4.130:8848</span><br><span class="line">173.16.4.131:8848</span><br><span class="line">173.16.4.132:8848</span><br></pre></td></tr></table></figure>
+
+<p>​	 这里是我们在服务器上运行的三台 nacos 服务实力，IP 地址就是 步骤 1.2 的三个地址。端口号为步骤 1.2 的三个端口号。</p>
+<p>​	<strong>文件属性配置</strong></p>
+<p>​	文件属性配置主要修改 application.properties 文件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 conf]# vim application.properties</span><br></pre></td></tr></table></figure>
+
+<p>​	数据源配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#*************** Config Module Related Configurations ***************#</span></span><br><span class="line"><span class="comment">### If use MySQL as datasource:</span></span><br><span class="line"><span class="comment">### Deprecated configuration property, it is recommended to use `spring.sql.init.platform` replaced.</span></span><br><span class="line"><span class="attr">spring.datasource.platform</span>=<span class="string">mysql</span></span><br><span class="line"><span class="comment">#spring.sql.init.platform=mysql</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">### Count of DB:</span></span><br><span class="line"><span class="attr">db.num</span>=<span class="string">1</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">### Connect URL of DB:</span></span><br><span class="line"><span class="attr">db.url.0</span>=<span class="string">jdbc:mysql://192.168.15.89:3305/nacos?characterEncoding=utf8&amp;connectTimeout=1000&amp;socketTimeout=3000&amp;autoReconnect=true&amp;useUnicode=true&amp;useSSL=false&amp;serverTimezone=UTC</span></span><br><span class="line"><span class="attr">db.user</span>=<span class="string">root</span></span><br><span class="line"><span class="attr">db.password</span>=<span class="string">123456</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">### Connection pool configuration: hikariCP</span></span><br><span class="line"><span class="attr">db.pool.config.connectionTimeout</span>=<span class="string">30000</span></span><br><span class="line"><span class="attr">db.pool.config.validationTimeout</span>=<span class="string">10000</span></span><br><span class="line"><span class="attr">db.pool.config.maximumPoolSize</span>=<span class="string">20</span></span><br><span class="line"><span class="attr">db.pool.config.minimumIdle</span>=<span class="string">2</span></span><br></pre></td></tr></table></figure>
+
+<p>​	鉴权配置：</p>
+<p>​	nacos 提供鉴权实现，我们需要开启鉴权，同时自定义用于生成 JWT 令牌的密钥。1.4.1 版本开始，nacos添加服务身份识别功能，用户可以自己配置服务端的 identity， 不再使用 userAgent 作为服务端请求的判断标准。</p>
+<p>​	配置信息如下：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">### The auth system to use, currently only &#x27;nacos&#x27; and &#x27;ldap&#x27; is supported:</span></span><br><span class="line"><span class="attr">nacos.core.auth.system.type</span>=<span class="string">nacos</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">### If turn on auth system:</span></span><br><span class="line"><span class="attr">nacos.core.auth.enabled</span>=<span class="string">true</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">### Since 1.4.1, worked when nacos.core.auth.enabled=true and nacos.core.auth.enable.userAgentAuthWhite=false.</span></span><br><span class="line"><span class="comment">### The two properties is the white list for auth and used by identity the request from other server.</span></span><br><span class="line"><span class="attr">nacos.core.auth.server.identity.key</span>=<span class="string">nacos</span></span><br><span class="line"><span class="attr">nacos.core.auth.server.identity.value</span>=<span class="string">nacos</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">### The default token (Base64 String):</span></span><br><span class="line"><span class="attr">nacos.core.auth.plugin.nacos.token.secret.key</span>=<span class="string">U2VjcmV0S2V5aGFma3NhZmtkYWtma2FrZmFranNkZml3dWJzZGZhc2RmYXNkZiA=</span></span><br></pre></td></tr></table></figure>
+
+<p>​	<strong>注意：集群中的所有配置文件都要配置相同的 server.identity 信息，否则可能导致服务端之间数据不一致或无法删除实例等问题。具具体可以参考 <a target="_blank" rel="noopener" href="https://nacos.io/zh-cn/docs/v2/guide/user/auth.html">https://nacos.io/zh-cn/docs/v2/guide/user/auth.html</a> 开启服务身份识别功能模块。</strong> </p>
+<p>​	启动之前防火墙需要放开端口 8848，8849 和 9848。</p>
+<h2 id="2-3、启动"><a href="#2-3、启动" class="headerlink" title="2.3、启动"></a>2.3、启动</h2><p>​	进入 bin 目录，启动nacos。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 bin]# ./startup.sh </span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk/bin/java -Djava.ext.dirs=/usr/lib/jvm/java-1.8.0-openjdk/jre/lib/ext:/usr/lib/jvm/java-1.8.0-openjdk/lib/ext  -server -Xms2g -Xmx2g -Xmn1g -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m -XX:-OmitStackTraceInFastThrow -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/nacos/nacos/logs/java_heapdump.hprof -XX:-UseLargePages -Dnacos.member.list= -Xloggc:/opt/nacos/nacos/logs/nacos_gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M -Dloader.path=/opt/nacos/nacos/plugins,/opt/nacos/nacos/plugins/health,/opt/nacos/nacos/plugins/cmdb,/opt/nacos/nacos/plugins/selector -Dnacos.home=/opt/nacos/nacos -jar /opt/nacos/nacos/target/nacos-server.jar  --spring.config.additional-location=file:/opt/nacos/nacos/conf/ --logging.config=/opt/nacos/nacos/conf/nacos-logback.xml --server.max-http-header-size=524288</span><br><span class="line">nacos is starting with cluster</span><br><span class="line">nacos is starting，you can check the /opt/nacos/nacos/logs/start.out</span><br></pre></td></tr></table></figure>
+
+<p>查看启动日志：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 logs]# cd /opt/nacos/nacos/logs/</span><br><span class="line">[root@centos8 logs]# tail -2000f start.out </span><br><span class="line">/usr/lib/jvm/java-1.8.0-openjdk/bin/java -Djava.ext.dirs=/usr/lib/jvm/java-1.8.0-openjdk/jre/lib/ext:/usr/lib/jvm/java-1.8.0-openjdk/lib/ext  -server -Xms2g -Xmx2g -Xmn1g -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m -XX:-OmitStackTraceInFastThrow -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/nacos/nacos/logs/java_heapdump.hprof -XX:-UseLargePages -Dnacos.member.list= -Xloggc:/opt/nacos/nacos/logs/nacos_gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M -Dloader.path=/opt/nacos/nacos/plugins,/opt/nacos/nacos/plugins/health,/opt/nacos/nacos/plugins/cmdb,/opt/nacos/nacos/plugins/selector -Dnacos.home=/opt/nacos/nacos -jar /opt/nacos/nacos/target/nacos-server.jar  --spring.config.additional-location=file:/opt/nacos/nacos/conf/ --logging.config=/opt/nacos/nacos/conf/nacos-logback.xml --server.max-http-header-size=524288</span><br><span class="line"></span><br><span class="line">         ,--.</span><br><span class="line">       ,--.&#x27;|</span><br><span class="line">   ,--,:  : |                                           Nacos 2.2.1</span><br><span class="line">,`--.&#x27;`|  &#x27; :                       ,---.               Running in cluster mode, All function modules</span><br><span class="line">|   :  :  | |                      &#x27;   ,&#x27;\   .--.--.    Port: 8848</span><br><span class="line">:   |   \ | :  ,--.--.     ,---.  /   /   | /  /    &#x27;   Pid: 7398</span><br><span class="line">|   : &#x27;  &#x27;; | /       \   /     \.   ; ,. :|  :  /`./   Console: http://173.16.4.130:8848/nacos/index.html</span><br><span class="line">&#x27;   &#x27; ;.    ;.--.  .-. | /    / &#x27;&#x27;   | |: :|  :  ;_</span><br><span class="line">|   | | \   | \__\/: . ..    &#x27; / &#x27;   | .; : \  \    `.      https://nacos.io</span><br><span class="line">&#x27;   : |  ; .&#x27; ,&quot; .--.; |&#x27;   ; :__|   :    |  `----.   \</span><br><span class="line">|   | &#x27;`--&#x27;  /  /  ,.  |&#x27;   | &#x27;.&#x27;|\   \  /  /  /`--&#x27;  /</span><br><span class="line">&#x27;   : |     ;  :   .&#x27;   \   :    : `----&#x27;  &#x27;--&#x27;.     /</span><br><span class="line">;   |.&#x27;     |  ,     .-./\   \  /            `--&#x27;---&#x27;</span><br><span class="line">&#x27;---&#x27;        `--`---&#x27;     `----&#x27;</span><br><span class="line"></span><br><span class="line">2024-07-27 23:10:56,152 INFO The server IP list of Nacos is [173.16.4.130:8848, 173.16.4.131:8848, 173.16.4.132:8848]</span><br><span class="line"></span><br><span class="line">2024-07-27 23:10:57,153 INFO Nacos is starting...</span><br></pre></td></tr></table></figure>
+
+<p>​	nacos 以集群方式启动，登陆控制台 （<a target="_blank" rel="noopener" href="http://173.16.4.130:8848/nacos/index.htm%EF%BC%89%EF%BC%8C%E5%A6%82%E4%B8%8B%E5%9B%BE">http://173.16.4.130:8848/nacos/index.htm），如下图</a>:</p>
+<p><img src="/img/loading.gif" data-original="/2024/07/27/nacos%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/nacos.jpg"></p>
+<p>按照上述操作启动其他两台 nacos，当启动其他的 nacos 服务时，节点状态会从 DOWN 变为 UP。</p>
+<h1 id="三、增加systemd管理"><a href="#三、增加systemd管理" class="headerlink" title="三、增加systemd管理"></a>三、增加systemd管理</h1><h2 id="3-1、-编写启动文件"><a href="#3-1、-编写启动文件" class="headerlink" title="3.1、 编写启动文件"></a>3.1、 编写启动文件</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos8 ~]# vim /etc/systemd/system/nacos.service</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-2、在文件中写入以下内容"><a href="#3-2、在文件中写入以下内容" class="headerlink" title="3.2、在文件中写入以下内容"></a>3.2、在文件中写入以下内容</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=nacos</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=forking</span><br><span class="line">ExecStart=/opt/nacos/nacos/bin/startup.sh</span><br><span class="line">ExecReload=/opt/nacos/bacos/bin/shutdown.sh</span><br><span class="line">ExecStop=/opt/nacos/bin/shutdown.sh</span><br><span class="line">PrivateTmp=true</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+
+<p>​	其中 &#x2F;opt&#x2F;nacos 为本机按照的 nacos 文件路径，-m standalone，表示作为单机启动，不加代表以集群启动，此处以集群启动。</p>
+<h2 id="3-3、设置开机启动"><a href="#3-3、设置开机启动" class="headerlink" title="3.3、设置开机启动"></a>3.3、设置开机启动</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">重启守护现场，进行文件生效配置</span></span><br><span class="line">[root@centos8 ~]# systemctl daemon-reload</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置为开机启动</span></span><br><span class="line">[root@centos8 ~]# systemctl enable nacos.service</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启动 nacos 服务</span></span><br><span class="line">[root@centos8 ~]# systemctl start nacos.service</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">停止 nacos 服务</span></span><br><span class="line">[root@centos8 ~]# systemctl stop nacos.service  </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">重启服务器</span></span><br><span class="line">[root@centos8 ~]# reboot </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看 nacos 状态</span></span><br><span class="line">[root@centos8 ~]# systemctl status nacos.service</span><br></pre></td></tr></table></figure>
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">wzd</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2024/07/27/nacos%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/">http://example.com/2024/07/27/nacos集群部署/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">飞光</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/nacos/">nacos</a><a class="post-meta__tags" href="/tags/%E5%8E%9F%E5%88%9B/">原创</a></div><div class="post-share"><div class="social-share" data-image="/images/topImg/IMG_6478.PNG" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/images/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/loading.gif" data-original="/images/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/images/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/loading.gif" data-original="/images/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2024/08/06/centos8%E9%98%B2%E7%81%AB%E5%A2%99%E7%9B%B8%E5%85%B3%E6%8C%87%E4%BB%A4/" title="centos8防火墙相关指令"><img class="cover" src="/img/loading.gif" data-original="/images/topImg/IMG_6458.PNG" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">centos8防火墙相关指令</div></div><div class="info-2"><div class="info-item-1">CentOs8防火墙操作命令查看防火墙某个端口是否开放1firewall-cmd --query-port=6379/tcp    开放防火墙端口1firewall-cmd --zone=public --add-port=6379/tcp --permanent  关闭端口1firewall-cmd --zone=public --remove-port=6379/tcp --permanent  重新载入配置，让开放或关闭的端口配置生效1firewall-cmd --reload  查看防火墙状态1systemctl status firewalld  关闭防火墙1systemctl stop firewalld  打开防火墙1systemctl start firewalld  重启防火墙1systemctl restart firewalld  开放一段端口1firewall-cmd --zone=public --add-port=40000-45000/tcp --permanent  查看开放的端口列表1firewall-cmd --zone=public...</div></div></div></a><a class="pagination-related" href="/2024/07/25/zookeeper%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/" title="zookeeper集群搭建"><img class="cover" src="/img/loading.gif" data-original="/images/topImg/IMG_6459.PNG" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">zookeeper集群搭建</div></div><div class="info-2"><div class="info-item-1">本文主要讲述如何在 centos8 上搭建 zookeeper 集群。centos8 基础知识自行搜索，本文不过多赘述。 1、准备工作​	配置 idk环境，本文为 jdk1.8，下载 SSH 连接工具，本文使用 tabby。准备 三台 服务器，也可以一台，在同时启动三个 zookeeper（伪集群）。本文用三台服务器作为案例，ip 地址分别为 173.16.4.130，173.16.4.131，173.16.4.131。   2、下载 zookeeper并解压1wget https://dlcdn.apache.org/zookeeper/zookeeper-3.8.4/apache-zookeeper-3.8.4-bin.tar.gz  3、解压123tar -zxvf apache-zookeeper-3.8.4-bin.tar.gzz  -c /opt/zookeepercd /opt/zookeeper/mv apache-zookeeper-3.8.4-bin apache-zookeeper-3.8.4  4、zookeeper 配置（重要）4.1、进入 conf...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2024/08/06/docker-%E5%AE%89%E8%A3%85-nacos-v1-4-7/" title="docker 安装 nacos v1.4.7"><img class="cover" src="/img/loading.gif" data-original="/images/topImg/IMG_6461.PNG" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-08-06</div><div class="info-item-2">docker 安装 nacos v1.4.7</div></div><div class="info-2"><div class="info-item-1">docker 安装 nacos v1.4.71、下载镜像1docker pull nacos/nacos-server:v1.4.7    2、创建容器网络1docker network create nacos_network  3、启动容器12345docker run --name nacos -d \-p 8848:8848 \--network nacos_network \-e MODE=standalone \nacos/nacos-server  ​	这个命令会启动一个名为 nacos 的容器，并将其绑定到物理机的 8848 端口。同时，它还会将容器添加到之前创建的 nacos_network 容器网络中，并设置容器模式为 standalone（单机）。 123456docker run --name nacos2.2.0 -d \-p 8848:8848 \-p 9848:9848 \--network nacos_network \-e MODE=standalone \nacos/nacos-server:v2.2.0  环境：Nacos版本...</div></div></div></a><a class="pagination-related" href="/2024/07/25/zookeeper%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/" title="zookeeper集群搭建"><img class="cover" src="/img/loading.gif" data-original="/images/topImg/IMG_6459.PNG" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-07-25</div><div class="info-item-2">zookeeper集群搭建</div></div><div class="info-2"><div class="info-item-1">本文主要讲述如何在 centos8 上搭建 zookeeper 集群。centos8 基础知识自行搜索，本文不过多赘述。 1、准备工作​	配置 idk环境，本文为 jdk1.8，下载 SSH 连接工具，本文使用 tabby。准备 三台 服务器，也可以一台，在同时启动三个 zookeeper（伪集群）。本文用三台服务器作为案例，ip 地址分别为 173.16.4.130，173.16.4.131，173.16.4.131。   2、下载 zookeeper并解压1wget https://dlcdn.apache.org/zookeeper/zookeeper-3.8.4/apache-zookeeper-3.8.4-bin.tar.gz  3、解压123tar -zxvf apache-zookeeper-3.8.4-bin.tar.gzz  -c /opt/zookeepercd /opt/zookeeper/mv apache-zookeeper-3.8.4-bin apache-zookeeper-3.8.4  4、zookeeper 配置（重要）4.1、进入 conf...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/loading.gif" data-original="/images/logo.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">wzd</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">16</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">18</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/wzd9" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">1.</span> <span class="toc-text">一、环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1%E3%80%81%E7%89%88%E6%9C%AC%E8%AF%B4%E6%98%8E"><span class="toc-number">1.1.</span> <span class="toc-text">1.1、版本说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2%E3%80%81%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2%E8%A7%84%E5%88%92"><span class="toc-number">1.2.</span> <span class="toc-text">1.2、服务部署规划</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E9%83%A8%E7%BD%B2%E5%AE%89%E8%A3%85"><span class="toc-number">2.</span> <span class="toc-text">二、部署安装</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1%E3%80%81%E4%B8%8B%E8%BD%BD%E5%B9%B6%E8%A7%A3%E5%8E%8B"><span class="toc-number">2.1.</span> <span class="toc-text">2.1、下载并解压</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2%E3%80%81%E9%85%8D%E7%BD%AE"><span class="toc-number">2.2.</span> <span class="toc-text">2.2、配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3%E3%80%81%E5%90%AF%E5%8A%A8"><span class="toc-number">2.3.</span> <span class="toc-text">2.3、启动</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%A2%9E%E5%8A%A0systemd%E7%AE%A1%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">三、增加systemd管理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1%E3%80%81-%E7%BC%96%E5%86%99%E5%90%AF%E5%8A%A8%E6%96%87%E4%BB%B6"><span class="toc-number">3.1.</span> <span class="toc-text">3.1、 编写启动文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2%E3%80%81%E5%9C%A8%E6%96%87%E4%BB%B6%E4%B8%AD%E5%86%99%E5%85%A5%E4%BB%A5%E4%B8%8B%E5%86%85%E5%AE%B9"><span class="toc-number">3.2.</span> <span class="toc-text">3.2、在文件中写入以下内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3%E3%80%81%E8%AE%BE%E7%BD%AE%E5%BC%80%E6%9C%BA%E5%90%AF%E5%8A%A8"><span class="toc-number">3.3.</span> <span class="toc-text">3.3、设置开机启动</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/01/04/%E5%85%B3%E4%BA%8ECollectors-groupingBy%E6%8C%89%E7%85%A7%E6%9F%90%E4%B8%AA%E5%AD%97%E6%AE%B5%E8%BF%9B%E8%A1%8C%E5%88%86%E7%BB%84%E5%B9%B6%E6%8E%92%E5%BA%8F%E7%9A%84%E9%97%AE%E9%A2%98/" title="关于Collectors.groupingBy按照某个字段进行分组并排序的问题"><img src="/img/loading.gif" data-original="/images/topImg/IMG_6460.PNG" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="关于Collectors.groupingBy按照某个字段进行分组并排序的问题"/></a><div class="content"><a class="title" href="/2025/01/04/%E5%85%B3%E4%BA%8ECollectors-groupingBy%E6%8C%89%E7%85%A7%E6%9F%90%E4%B8%AA%E5%AD%97%E6%AE%B5%E8%BF%9B%E8%A1%8C%E5%88%86%E7%BB%84%E5%B9%B6%E6%8E%92%E5%BA%8F%E7%9A%84%E9%97%AE%E9%A2%98/" title="关于Collectors.groupingBy按照某个字段进行分组并排序的问题">关于Collectors.groupingBy按照某个字段进行分组并排序的问题</a><time datetime="2025-01-04T07:56:42.000Z" title="发表于 2025-01-04 15:56:42">2025-01-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/12/22/SpringBoot%E7%9A%84%E5%8F%AF%E6%89%A9%E5%B1%95%E6%8E%A5%E5%8F%A3/" title="SpringBoot的可扩展接口"><img src="/img/loading.gif" data-original="/images/topImg/IMG_6457.PNG" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="SpringBoot的可扩展接口"/></a><div class="content"><a class="title" href="/2024/12/22/SpringBoot%E7%9A%84%E5%8F%AF%E6%89%A9%E5%B1%95%E6%8E%A5%E5%8F%A3/" title="SpringBoot的可扩展接口">SpringBoot的可扩展接口</a><time datetime="2024-12-22T03:58:26.000Z" title="发表于 2024-12-22 11:58:26">2024-12-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/12/11/Docker%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/" title="Docker入门教程"><img src="/img/loading.gif" data-original="/images/topImg/IMG_6464.PNG" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Docker入门教程"/></a><div class="content"><a class="title" href="/2024/12/11/Docker%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/" title="Docker入门教程">Docker入门教程</a><time datetime="2024-12-11T11:50:54.000Z" title="发表于 2024-12-11 19:50:54">2024-12-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/12/11/maven%E7%A7%81%E6%9C%8D%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8/" title="maven私服安装和使用"><img src="/img/loading.gif" data-original="/images/topImg/IMG_6475.PNG" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="maven私服安装和使用"/></a><div class="content"><a class="title" href="/2024/12/11/maven%E7%A7%81%E6%9C%8D%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8/" title="maven私服安装和使用">maven私服安装和使用</a><time datetime="2024-12-11T11:42:52.000Z" title="发表于 2024-12-11 19:42:52">2024-12-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/12/11/nginx%E5%85%A5%E9%97%A8/" title="nginx入门"><img src="/img/loading.gif" data-original="/images/topImg/IMG_6476.PNG" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="nginx入门"/></a><div class="content"><a class="title" href="/2024/12/11/nginx%E5%85%A5%E9%97%A8/" title="nginx入门">nginx入门</a><time datetime="2024-12-11T11:38:42.000Z" title="发表于 2024-12-11 19:38:42">2024-12-11</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2025 By wzd</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div>
+        <style>
+            [bg-lazy] {
+                background-image: none !important;
+                background-color: #eee !important;
+            }
+        </style>
+        <script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z\d\-\.\+]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(t.test(e.href)||r.test(e.href))&&(e.href=a.dataset.original)})});</script><script>(r=>{r.imageLazyLoadSetting.processImages=t;var a=r.imageLazyLoadSetting.isSPA,o=r.imageLazyLoadSetting.preloadRatio||1,d=i();function i(){var t=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")),e=Array.prototype.slice.call(document.querySelectorAll("[bg-lazy]"));return t.concat(e)}function t(t){(a||t)&&(d=i());for(var e,n=0;n<d.length;n++)0<=(e=(e=d[n]).getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(r.innerHeight*o||document.documentElement.clientHeight*o)&&(()=>{var t,e,a,o,i=d[n];e=function(){d=d.filter(function(t){return i!==t}),r.imageLazyLoadSetting.onImageLoaded&&r.imageLazyLoadSetting.onImageLoaded(i)},(t=i).dataset.loaded||(t.hasAttribute("bg-lazy")?(t.removeAttribute("bg-lazy"),e&&e()):(a=new Image,o=t.getAttribute("data-original"),a.onload=function(){t.src=o,t.removeAttribute("data-original"),t.setAttribute("data-loaded",!0),e&&e()},a.onerror=function(){t.removeAttribute("data-original"),t.setAttribute("data-loaded",!1),t.src=o},t.src!==o&&(a.src=o)))})()}function e(){clearTimeout(t.tId),t.tId=setTimeout(t,500)}t(),document.addEventListener("scroll",e),r.addEventListener("resize",e),r.addEventListener("orientationchange",e)})(this);</script></body></html>
