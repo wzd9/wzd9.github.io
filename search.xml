@@ -13,14 +13,22 @@
       
       <categories>
           
-          <category> java虚拟机，jvm， 原创 </category>
+          <category> java虚拟机 </category>
+          
+          <category> jvm </category>
+          
+          <category> 原创 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> java虚拟机，jvm， 原创 </tag>
+            <tag> 原创 </tag>
+            
+            <tag> java虚拟机 </tag>
+            
+            <tag> jvm </tag>
             
         </tags>
       
